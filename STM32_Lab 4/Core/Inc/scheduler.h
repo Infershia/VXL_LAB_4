@@ -10,21 +10,21 @@
 
 #include <stdint.h>
 
-#define SCH_MAX_TASKS	40
-#define TICK			10
-#define NO_TASK_ID		0
+#define SCH_MAX_TASKS   40
+#define TICK            10
+#define NO_TASK_ID      0
 
 typedef struct {
-	void (*pTask)(void);  // Pointer to the task function
-	uint32_t Delay;       // Delay (ticks) until the function will (next) be run
-	uint32_t Period;      // Interval (ticks) between subsequent runs
-	uint8_t RunMe;        // Incremented when task is due to execute
-	uint32_t TaskID;
+    void (*pTask)(void);   // Pointer to the task function
+    uint32_t Delay;        // Relative delay (ticks) before run
+    uint32_t Period;       // Period (ticks), 0 = one-shot
+    uint8_t  RunMe;        // Run flag
+    uint32_t TaskID;       // Unique ID for task deletion
 } sTask;
 
 typedef struct {
-	sTask TASK_QUEUE[SCH_MAX_TASKS];
-	int numofTask;
+    sTask TASK_QUEUE[SCH_MAX_TASKS];
+    int numofTask;
 } taskList;
 
 // Task list storage
@@ -32,8 +32,8 @@ extern taskList SCH_TASK_LIST;
 
 // Function
 void SCH_Init(void);
-uint32_t SCH_Add_Task(void (*pFunction)(), uint32_t DELAY, uint32_t PERIOD);
 void SCH_Update(void);
+void SCH_Add_Task(void (*pFunction)(), uint32_t delay_ms, uint32_t period_ms);
 void SCH_Dispatch_Tasks(void);
 uint8_t SCH_Delete_Task(uint32_t taskID);
 
